@@ -1,0 +1,21 @@
+# Processed data (large, generated)
+Data/clean-pain-only/
+
+# Raw dataset (also large)
+Data/Raw-Data/
+
+# Any audio files
+*.wav
+
+# Numpy arrays
+*.npy
+
+# Images (optional, if you don't want them tracked)
+*.png
+
+# VSCode stuff
+.vscode/
+
+# Python cache
+__pycache__/
+*.pyc
