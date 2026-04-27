@@ -1,0 +1,19 @@
+# Raw dataset (also large)
+Data/
+Data/clean-pain-only.zip
+
+# Any audio files
+*.wav
+
+# Numpy arrays
+*.npy
+
+# Images (optional, if you don't want them tracked)
+*.png
+
+# VSCode stuff
+.vscode/
+
+# Python cache
+__pycache__/
+*.pyc
