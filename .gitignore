@@ -1,6 +1,8 @@
+# Processed data (large, generated)
+Data/clean-pain-only/
+
 # Raw dataset (also large)
-Data/
-Data/clean-pain-only.zip
+Data/Raw-Data/
 
 # Any audio files
 *.wav
