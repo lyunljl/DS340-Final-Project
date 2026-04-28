@@ -1,108 +1,325 @@
-# DS340 Final Project
-# Baymax 0.1.0
-
-**Eduardo Torres & Jacky Lin** — DS340 Final Project
-
-A neural network system for detecting short human distress-related vocalizations (e.g., "ouch", "ahh") in audio clips, even in the presence of background noise.
-
----
+# Neural Network Pain Audio Recognition and Classification
 
 ## Overview
 
-This project is inspired by wake-word detection systems, but instead of detecting a fixed keyword, it focuses on identifying pain-related vocalizations — sounds that are more variable and less structured than standard keywords. These vocalizations differ significantly across speakers and environments, making the task more challenging. The goal is to explore how well machine learning models can generalize across different types of human vocal expressions and noisy conditions.
+This project builds machine learning models to detect **pain from audio recordings**. Using mel spectrograms, we classify short human vocalizations as either **pain** or **no pain**.
 
 ---
 
-## Task Setup
+## What This Project Does
 
-Binary audio classification:
-- **Class 1:** Pain-related vocalizations
-- **Class 2:** Non-pain audio (normal speech, silence, background noise)
-
----
-
-## Data
-
-**Primary dataset:**
-> Landry, Touko. "ASVP-ESD (Speech & Non-Speech Emotional Sound)." Kaggle.com, 2022. [Link](https://www.kaggle.com/datasets/dejolilandry/asvpesdspeech-nonspeech-emotional-utterances)
-
-The dataset contains audio files in mixed-voice, mixed-volume environments, categorized as:
-
-| Emotion   | Sub-categories |
-|-----------|----------------|
-| Happiness | laugh, gaggle, others |
-| Sadness   | cry, sigh, sniffle, suffering |
-| Fear      | scream, panic |
-| Angry     | rage, frustration, grunt, other |
-| Surprise  | surprised, amazed, astonishment, others |
-| Disgust   | disgust, rejection |
-| Pain      | moaned |
-| Boredom   | sigh |
-
-Supplemental data may also be collected manually.
+* Converts raw audio into spectrograms
+* Trains CNN and Transformer-based models
+* Evaluates binary (pain vs no pain) classification
+* Compares clean vs noisy data performance
 
 ---
 
-## Methods
+## Full Repository Structure
 
-### Preprocessing
-Raw audio signals are converted into numerical representations:
-- **Spectrograms**
-- **MFCC** (Mel-frequency cepstral coefficients)
-
-### Models
-- **CNNs** applied to spectrogram images
-- **Feedforward / recurrent neural networks** applied to MFCC features
-
----
-
-## Experiments
-
-Four aspects of the system are varied and evaluated:
-
-1. **Feature Representation** — MFCC vs. spectrogram
-2. **Noise Conditions** — Clean audio vs. audio with background noise
-3. **Model Architecture** — CNN vs. simpler baseline models
-4. **Audio Clip Length** — Short vs. longer audio windows
-
-Each variation is evaluated using consistent metrics for fair comparison.
-
----
-
-## Evaluation
-
-**Metrics:**
-- Accuracy
-- Precision and Recall
-
-**Demonstration:** The model processes an input audio clip and outputs the probability that it contains a pain-related vocalization.
-
----
-
-## Tech Stack
-
-- Python
-- PyTorch or TensorFlow
-- NumPy
-- Librosa
-
----
-
-## Project Timeline
-
-| Week | Goals |
-|------|-------|
-| Week 1 | Collect and organize dataset; implement preprocessing pipeline |
-| Week 2 | Train baseline model (CNN on spectrograms) |
-| Week 3 *(Milestone)* | Compare MFCC-based and spectrogram-based models; present initial results to TA |
-| Week 4 | Run experiments (noise levels, model types, clip lengths) |
-| Week 5 | Final evaluation; prepare paper and presentation |
+```
+.
+├── cnns/
+│   ├── best_pain_cnn.pt
+│   ├── Model 1 - Clean Data, No Class Balancing.ipynb
+│   └── Model 2 - Noisy + Clean Data, With Class Balancing.ipynb
+│
+├── Data/                          # MUST BE CREATED LOCALLY (not in repo)
+│   ├── Raw-Data/
+│   ├── all-pain/
+│   │   ├── eda/
+│   │   ├── npy/
+│   │   │   ├── no-pain/
+│   │   │   └── pain/
+│   │   └── png/
+│   │       ├── no-pain/
+│   │       └── pain/
+│   │
+│   ├── clean-pain-only/
+│   │   ├── metadata/
+│   │   ├── npy/
+│   │   │   ├── no-pain/
+│   │   │   └── pain/
+│   │   └── png/
+│   │       ├── no-pain/
+│   │       └── pain/
+│   │
+│   └── Raw-Data/
+│
+├── Data-Conversion/              # preprocessing scripts
+│
+├── TRANSFER LEARNING MODEL/
+│   ├── All Categories/
+│   └── Binary Model/
+│
+├── README.md
+├── LICENSE
+└── .gitignore
+```
 
 ---
 
-## Contributions
+## Setup (START HERE)
 
-- Custom dataset design and collection of pain-related vocalizations
-- Implementation and comparison of multiple audio feature extraction techniques
-- Evaluation of model performance under different noise conditions
-- Systematic analysis of performance across architectures and preprocessing methods
+### 1. Clone Repo
+
+```
+git clone <your-repo-url>
+cd <repo-name>
+```
+
+---
+
+### 2. Create Virtual Environment
+
+```
+python -m venv venv
+```
+
+Activate it:
+
+**Windows**
+
+```
+venv\Scripts\activate
+```
+
+---
+
+### 3. Install Dependencies
+
+```
+pip install torch librosa numpy matplotlib scikit-learn transformers
+```
+
+---
+
+## Data Setup (CRITICAL)
+
+The dataset is NOT included (~2.7GB).
+
+### Step 1 — Download Dataset
+
+Download from Kaggle:
+
+https://www.kaggle.com/datasets/dejolilandry/asvpesdspeech-nonspeech-emotional-utterances
+
+---
+
+### Step 2 — Create Data Folder
+
+Create this EXACT structure:
+
+```
+Data/
+├── Raw-Data/
+├── all-pain/
+│   ├── eda/
+│   ├── npy/
+│   │   ├── no-pain/
+│   │   └── pain/
+│   └── png/
+│       ├── no-pain/
+│       └── pain/
+└── clean-pain-only/
+    ├── metadata/
+    ├── npy/
+    │   ├── no-pain/
+    │   └── pain/
+    └── png/
+        ├── no-pain/
+        └── pain/
+```
+
+---
+
+### Step 3 — Add Raw Data
+
+Put ALL downloaded files into:
+
+```
+Data/Raw-Data/
+```
+
+---
+
+### Step 4 — Run Preprocessing
+
+```
+cd Data-Conversion
+python your_conversion_script.py
+```
+
+This will generate:
+
+```
+Data/clean-pain-only/npy/
+Data/clean-pain-only/png/
+Data/all-pain/npy/
+Data/all-pain/png/
+```
+
+If these folders are empty, your preprocessing failed.
+
+---
+
+## How to Run Models
+
+### Option 1 — Use Notebooks
+
+Open:
+
+```
+cnns/
+```
+
+Run:
+
+* Model 1 (clean data)
+* Model 2 (noisy + clean)
+
+---
+
+### Option 2 — Load Trained Model
+
+```
+cnns/best_pain_cnn.pt
+```
+
+You can load it in PyTorch:
+
+```
+model.load_state_dict(torch.load("cnns/best_pain_cnn.pt"))
+model.eval()
+```
+
+---
+
+### Option 3 — Transfer Learning Models
+
+Go to:
+
+```
+TRANSFER LEARNING MODEL/
+```
+
+Run:
+
+* Binary model notebook
+* All categories notebook
+
+---
+
+## Preprocessing Details
+
+* Sample rate: 16,000 Hz
+* Duration: 3 seconds
+* FFT: 1024
+* Hop length: 512
+* Mel bins: 128
+
+Output:
+
+```
+(128, 94)
+```
+
+Model input:
+
+```
+(N, 1, 128, 94)
+```
+
+---
+
+## Models
+
+### PainCNN (Baseline)
+
+CNN trained from scratch:
+
+```
+Conv → BN → ReLU → Pool → Dropout
+Conv → BN → ReLU → Pool → Dropout
+Conv → BN → ReLU → Pool → Dropout
+Flatten → FC → Output
+```
+
+---
+
+### Transfer Learning (AST)
+
+Model:
+
+```
+MIT/ast-finetuned-audioset-10-10-0.4593
+```
+
+Used for:
+
+* Binary classification
+* Multiclass classification
+
+---
+
+## Results
+
+### Binary Model
+
+* Accuracy: ~0.542 → ~0.738
+* F1: ~0.276 → ~0.699
+
+### Multiclass Model
+
+* Accuracy: ~0.552
+* F1: ~0.539
+
+Conclusion:
+
+Binary classification works significantly better.
+
+---
+
+## Limitations
+
+* Only ~704 pain samples
+* Strong class imbalance
+* Acted dataset (not real clinical data)
+* Poor real-world noise handling
+* No temporal modeling
+* No demographic balancing
+
+---
+
+## Important Notes
+
+* Data folder is NOT included
+* Do NOT commit dataset
+* Folder structure MUST match exactly
+* If scripts fail → check paths first
+
+---
+
+## Authors
+
+Jacky Lin
+Eduardo Torres
+
+---
+
+## Acknowledgements
+
+Dataset: ASVP-ESD (Kaggle)
+Model: MIT AST (Hugging Face)
+
+---
+
+## AI Usage
+
+AI was used for:
+
+* debugging
+* code clarity
+* documentation improvements
+
+All core work was completed by the authors.
